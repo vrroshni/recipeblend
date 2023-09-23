@@ -4,6 +4,7 @@ import recipeView from './view/recipeView.js';
 const recipeContainer = document.querySelector('.recipe');
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
+import searchView from './view/searchView.js';
 
 
 
@@ -30,13 +31,33 @@ const controlRecipe = async () => {
   }
 
 }
+const controlSearchResults = async () => {
+  try {
+
+    const query = searchView.getQuery()
+    if(!query)
+    return
+
+
+
+    await model.loadSearchResults(query)
+
+
+
+
+
+  } catch (error) {
+    console.log(error)
+  }
+
+}
 
 
 //publisher subsiber pattern
 const init = function () {
   recipeView.addHandlerRender(controlRecipe)
+  searchView.addHandlerSearch(controlSearchResults)
 }
-
 
 
 init()
