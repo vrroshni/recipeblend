@@ -3,30 +3,31 @@ import icons from 'url:../../img/icons.svg'
 import fracty from "fracty";
 
 class RecipeView {
-    #parentElement = document.querySelector('.recipe')
-    #data
-    render(data) {
+  #parentElement = document.querySelector('.recipe')
+  #data
+  #errorMessage="We couldn't find the specified recipe.Please try another one"
+  #message=""
+  render(data) {
+    this.#data = data
+    const markup = this.#generateMarkUp()
+    this.#clear()
+    this.#parentElement.insertAdjacentHTML('afterbegin', markup)
 
-        this.#data = data
-        const markup = this.#generateMarkUp()
-        this.#clear()
-        this.#parentElement.insertAdjacentHTML('afterbegin', markup)
+  }
 
-    }
-
-    renderSpinner() {
-        const markup = `<div class="spinner">
+  renderSpinner() {
+    const markup = `<div class="spinner">
                         <svg>
                        <use href="${icons}#icon-loader"></use>
                       </svg>
                       </div>`
-        this.#clear()
-        this.#parentElement.insertAdjacentHTML("afterbegin", markup)
-    }
+    this.#clear()
+    this.#parentElement.insertAdjacentHTML("afterbegin", markup)
+  }
 
 
-    #generateMarkUp() {
-        return `<figure class="recipe__fig">
+  #generateMarkUp() {
+    return `<figure class="recipe__fig">
         <img src=${this.#data.imageUrl} alt="Tomato" class="recipe__img" />
         <h1 class="recipe__title">
           <span>${this.#data.title}</span>
@@ -100,23 +101,57 @@ class RecipeView {
           </svg>
         </a>
       </div>`
-    }
+  }
 
 
-    #clear() {
-        this.#parentElement.innerHTML = ''
-    }
-    #generateMarkupIngredient(ing) {
-        return`<li class="recipe__ingredient">
+  #clear() {
+    this.#parentElement.innerHTML = ''
+  }
+
+  addHandlerRender(handler) {
+
+    const eventTypes = ["hashchange", "load"];
+
+    eventTypes.forEach(eventType => {
+      window.addEventListener(eventType, handler);
+    });
+  }
+  #generateMarkupIngredient(ing) {
+    return `<li class="recipe__ingredient">
           <svg class="recipe__icon">
             <use href="${icons}#icon-check"></use>
           </svg>
-          <div class="recipe__quantity">${ ing.quantity ? fracty(ing.quantity).toString()  : ''} </div>
+          <div class="recipe__quantity">${ing.quantity ? fracty(ing.quantity).toString() : ''} </div>
           <div class="recipe__description">
             <span class="recipe__unit">${ing.unit}</span>
             ${ing.description}
         </li>`
-    }
+  }
+
+  renderError(message=this.#errorMessage){
+    const markup=`<div class="error">
+    <div>
+      <svg>
+        <use href="${icons}#icon-alert-triangle"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div>`
+  this.#clear()
+  this.#parentElement.insertAdjacentHTML("afterbegin", markup)
+  }
+  renderMessage(message=this.#message){
+    const markup=`<div class="message">
+    <div>
+      <svg>
+        <use href="${icons}#icon-smile"></use>
+      </svg>
+    </div>
+    <p>${message}</p>
+  </div>`
+  this.#clear()
+  this.#parentElement.insertAdjacentHTML("afterbegin", markup)
+  }
 
 }
 
