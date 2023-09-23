@@ -1,0 +1,17 @@
+{
+  "name": "recipeblend",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html --dist-dir ./dist"
+  },
+  "author": "Roshni V R",
+  "license": "ISC",
+  "dependencies": {
+    "@parcel/transformer-sass": "^2.2.1",
+    "core-js": "^3.32.2",
+    "parcel": "^2.2.1",
+    "regenerator-runtime": "^0.14.0"
+  }
+}
