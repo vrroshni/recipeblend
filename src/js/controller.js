@@ -27,7 +27,10 @@ const controlRecipe = async () => {
     if (!id) {
       return
     }
-    recipeView.renderSpinner(recipeContainer)
+    recipeView.renderSpinner()
+    resultsView.update(model.getSearchResultsPage())
+
+
     await model.loadRecipe(id)
     recipeView.render(model.state.recipe)
   } catch (error) {
@@ -40,6 +43,8 @@ const controlSearchResults = async () => {
   try {
     resultsView.renderSpinner()
     const query = searchView.getQuery()
+
+
     if (!query)
       return
 
@@ -52,7 +57,7 @@ const controlSearchResults = async () => {
 
 
   } catch (error) {
-    console.log(error)
+    resultsView.renderError()
   }
 
 }
@@ -66,7 +71,7 @@ const controlPagination = async (goto) => {
 }
 
 
-const controlServings=(newServings)=>{
+const controlServings = (newServings) => {
 
 
   //update recipe servings
@@ -76,7 +81,7 @@ const controlServings=(newServings)=>{
 
 
   //update recipe view
-  recipeView.render(model.state.recipe)
+  recipeView.update(model.state.recipe)
 
 
 }

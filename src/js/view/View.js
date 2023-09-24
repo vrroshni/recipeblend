@@ -26,6 +26,33 @@ export default class View {
     this._parentElement.innerHTML = ''
   }
 
+  update(data) {
+    this._data = data
+    const newMarkup = this._generateMarkUp()
+
+    //virtual dom(living in memory to compare)
+    const newDom = document.createRange().createContextualFragment(newMarkup)
+    const newElements = Array.from(newDom.querySelectorAll("*")) //entire list of elements in newDom
+
+    const currentElements = Array.from(this._parentElement.querySelectorAll("*"))
+
+    newElements.forEach((newEl, i) => {
+      const currentEl = currentElements[i]
+
+      if (!newEl.isEqualNode(currentEl) && newEl.firstChild?.nodeValue.trim() !== '') {
+        currentEl.textContent = newEl.textContent
+      }
+
+      //changing attributes
+      if (!newEl.isEqualNode(currentEl)) {
+        Array.from(newEl.attributes).forEach(attr =>
+          currentEl.setAttribute(attr.name, attr.value)
+        )
+      }
+
+
+    })
+  }
 
   renderError(message = this._errorMessage) {
     const markup = `<div class="error">

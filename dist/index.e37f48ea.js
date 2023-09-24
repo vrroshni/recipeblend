@@ -597,7 +597,8 @@ const controlRecipe = async ()=>{
     try {
         const id = window.location.hash.slice(1);
         if (!id) return;
-        (0, _recipeViewJsDefault.default).renderSpinner(recipeContainer);
+        (0, _recipeViewJsDefault.default).renderSpinner();
+        (0, _resultsViewJsDefault.default).update(_modelJs.getSearchResultsPage());
         await _modelJs.loadRecipe(id);
         (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
     } catch (error) {
@@ -613,7 +614,7 @@ const controlSearchResults = async ()=>{
         (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
     } catch (error) {
-        console.log(error);
+        (0, _resultsViewJsDefault.default).renderError();
     }
 };
 const controlPagination = async (goto)=>{
@@ -624,7 +625,7 @@ const controlServings = (newServings)=>{
     //update recipe servings
     _modelJs.updateServings(newServings);
     //update recipe view
-    (0, _recipeViewJsDefault.default).render(_modelJs.state.recipe);
+    (0, _recipeViewJsDefault.default).update(_modelJs.state.recipe);
 };
 //publisher subsiber pattern
 const init = function() {
@@ -1947,7 +1948,6 @@ const updateServings = function(newServings) {
         ing.quantity = ing.quantity * newServings / state.recipe.servings;
     });
     state.recipe.servings = newServings;
-    console.log(state.recipe.servings, "serrr");
 };
 
 },{"regenerator-runtime":"dXNgZ","./config":"k5Hzs","./helpers":"hGI1E","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"dXNgZ":[function(require,module,exports) {
@@ -2703,7 +2703,6 @@ class RecipeView extends (0, _viewDefault.default) {
             const btn = e.target.closest(".btn--tiny");
             if (!btn) return;
             const update = +btn.dataset.updateTo;
-            console.log(update);
             if (update > 0) handler(update);
         });
     }
@@ -2880,6 +2879,21 @@ class View {
     _clear() {
         this._parentElement.innerHTML = "";
     }
+    update(data) {
+        this._data = data;
+        const newMarkup = this._generateMarkUp();
+        //virtual dom(living in memory to compare)
+        const newDom = document.createRange().createContextualFragment(newMarkup);
+        const newElements = Array.from(newDom.querySelectorAll("*")) //entire list of elements in newDom
+        ;
+        const currentElements = Array.from(this._parentElement.querySelectorAll("*"));
+        newElements.forEach((newEl, i)=>{
+            const currentEl = currentElements[i];
+            if (!newEl.isEqualNode(currentEl) && newEl.firstChild?.nodeValue.trim() !== "") currentEl.textContent = newEl.textContent;
+            //changing attributes
+            if (!newEl.isEqualNode(currentEl)) Array.from(newEl.attributes).forEach((attr)=>currentEl.setAttribute(attr.name, attr.value));
+        });
+    }
     renderError(message = this._errorMessage) {
         const markup = `<div class="error">
         <div>
@@ -2944,10 +2958,11 @@ class ResultsView extends (0, _viewDefault.default) {
         return this._data.map(this._generateMarkupPreview).join("");
     }
     _generateMarkupPreview(result) {
+        const id = window.location.hash.slice(1) === result.id;
         return `<li class="preview">
-    <a class="preview__link" href="#${result.id}">
+    <a class="preview__link ${id && "preview__link--active"}" href="#${result.id}">
       <figure class="preview__fig">
-        <img src="${result.imageUrl}" alt="${result.title}" />
+        <img src="${result.imageUrl} " alt="${result.title}" />
       </figure>
       <div class="preview__data">
         <h4 class="preview__title">${result.title}</h4>
@@ -2972,7 +2987,6 @@ class PaginationView extends (0, _viewDefault.default) {
     _generateMarkUp() {
         const numPages = Math.ceil(this._data.results.length / this._data.resultsPerPage);
         const currentPage = this._data.page;
-        console.log(numPages);
         //page 1 and there are other pages
         if (currentPage === 1 && numPages > 1) return `<button class="btn--inline pagination__btn--next" data-goto="${currentPage + 1}">
             <span>Page ${currentPage + 1}</span>

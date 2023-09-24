@@ -106,7 +106,6 @@ class RecipeView extends View {
       }
 
       const update = +btn.dataset.updateTo
-      console.log(update)
       if (update > 0) {
         handler(update)
       }
