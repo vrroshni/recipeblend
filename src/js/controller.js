@@ -1,22 +1,13 @@
 import * as model from './model.js';
 import recipeView from './view/recipeView.js';
-
-const recipeContainer = document.querySelector('.recipe');
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import searchView from './view/searchView.js';
 import resultsView from './view/resultsView.js';
 import paginationView from './view/paginationView.js';
+import bookmarksView from './view/bookmarksView.js';
+import addRecipeView from './view/addRecipeView.js';
 
-//from parcel
-// if (module.hot) {
-//   module.hot.accept()
-// }
-
-
-
-// https://forkify-api.herokuapp.com/v2
-///////////////////////////////////////
 
 
 
@@ -29,76 +20,68 @@ const controlRecipe = async () => {
     }
     recipeView.renderSpinner()
     resultsView.update(model.getSearchResultsPage())
-
-
+    bookmarksView.update(model.state.bookmarks)
     await model.loadRecipe(id)
     recipeView.render(model.state.recipe)
   } catch (error) {
     recipeView.renderError()
   }
-
-
 }
+
+
 const controlSearchResults = async () => {
   try {
     resultsView.renderSpinner()
     const query = searchView.getQuery()
-
-
-    if (!query)
+    if (!query) {
       return
-
-
+    }
     await model.loadSearchResults(query)
-
     resultsView.render(model.getSearchResultsPage())
-
     paginationView.render(model.state.search)
-
-
   } catch (error) {
     resultsView.renderError()
   }
-
 }
+
+
 const controlPagination = async (goto) => {
-
-
   resultsView.render(model.getSearchResultsPage(goto))
-
   paginationView.render(model.state.search)
-
 }
 
 
 const controlServings = (newServings) => {
-
-
   //update recipe servings
   model.updateServings(newServings)
-
-
-
-
   //update recipe view
   recipeView.update(model.state.recipe)
-
-
 }
 
+const controlAddBookMark = () => {
+  if (!model.state.recipe.bookmarked) {
+    model.addBookmark(model.state.recipe)
+  } else {
+    model.removeBookmark(model.state.recipe.id)
+  }
+  //update recipe servings
+  recipeView.update(model.state.recipe)
+  bookmarksView.render(model.state.bookmarks)
+}
 
-
-
-
+const controlBookMarks = () => {
+  bookmarksView.render(model.state.bookmarks)
+}
 
 
 //publisher subsiber pattern
 const init = function () {
-
   recipeView.addHandlerRender(controlRecipe)
   recipeView.addHandlerUpdateServings(controlServings)
+  recipeView.addHandlerAddBookmark(controlAddBookMark)
   searchView.addHandlerSearch(controlSearchResults)
   paginationView.addHandlerPagination(controlPagination)
+  bookmarksView.addHandlerRender(controlBookMarks)
 }
 
 
