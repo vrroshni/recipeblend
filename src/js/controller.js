@@ -34,6 +34,7 @@ const controlRecipe = async () => {
     recipeView.renderError()
   }
 
+
 }
 const controlSearchResults = async () => {
   try {
@@ -65,11 +66,32 @@ const controlPagination = async (goto) => {
 }
 
 
+const controlServings=(newServings)=>{
+
+
+  //update recipe servings
+  model.updateServings(newServings)
+
+
+
+
+  //update recipe view
+  recipeView.render(model.state.recipe)
+
+
+}
+
+
+
+
+
 
 
 //publisher subsiber pattern
 const init = function () {
+
   recipeView.addHandlerRender(controlRecipe)
+  recipeView.addHandlerUpdateServings(controlServings)
   searchView.addHandlerSearch(controlSearchResults)
   paginationView.addHandlerPagination(controlPagination)
 }

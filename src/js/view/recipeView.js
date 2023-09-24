@@ -3,12 +3,12 @@ import icons from 'url:../../img/icons.svg'
 import fracty from "fracty";
 import View from './View';
 
-class RecipeView extends View  {
+class RecipeView extends View {
   _parentElement = document.querySelector('.recipe')
-  _errorMessage="We couldn't find the specified recipe.Please try another one"
-  _message=""
+  _errorMessage = "We couldn't find the specified recipe.Please try another one"
+  _message = ""
 
- 
+
 
   _generateMarkUp() {
     return `<figure class="recipe__fig">
@@ -30,16 +30,16 @@ class RecipeView extends View  {
           <svg class="recipe__info-icon">
             <use href="${icons}#icon-users"></use>
           </svg>
-          <span class="recipe__info-data recipe__info-data--people">4</span>
+          <span class="recipe__info-data recipe__info-data--people">${this._data.servings}</span>
           <span class="recipe__info-text">servings</span>
     
           <div class="recipe__info-buttons">
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings - 1}">
               <svg>
                 <use href="${icons}#icon-minus-circle"></use>
               </svg>
             </button>
-            <button class="btn--tiny btn--increase-servings">
+            <button class="btn--tiny btn--update-servings" data-update-to="${this._data.servings + 1}">
               <svg>
                 <use href="${icons}#icon-plus-circle"></use>
               </svg>
@@ -86,7 +86,7 @@ class RecipeView extends View  {
   }
 
 
-  
+
 
   addHandlerRender(handler) {
 
@@ -96,6 +96,24 @@ class RecipeView extends View  {
       window.addEventListener(eventType, handler);
     });
   }
+  addHandlerUpdateServings(handler) {
+    this._parentElement.addEventListener("click", function (e) {
+      e.preventDefault()
+      const btn = e.target.closest(".btn--tiny")
+
+      if (!btn) {
+        return
+      }
+
+      const update = +btn.dataset.updateTo
+      console.log(update)
+      if (update > 0) {
+        handler(update)
+      }
+    })
+
+  }
+
   _generateMarkupIngredient(ing) {
     return `<li class="recipe__ingredient">
           <svg class="recipe__icon">
@@ -108,7 +126,7 @@ class RecipeView extends View  {
         </li>`
   }
 
-  
+
 
 }
 
