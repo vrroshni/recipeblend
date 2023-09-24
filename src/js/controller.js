@@ -6,11 +6,12 @@ import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import searchView from './view/searchView.js';
 import resultsView from './view/resultsView.js';
+import paginationView from './view/paginationView.js';
 
 //from parcel
-if(module.hot){
-  module.hot.accept()
-}
+// if (module.hot) {
+//   module.hot.accept()
+// }
 
 
 
@@ -42,11 +43,11 @@ const controlSearchResults = async () => {
       return
 
 
-
     await model.loadSearchResults(query)
 
+    resultsView.render(model.getSearchResultsPage())
 
-    resultsView.render(model.state.search.results)
+    paginationView.render(model.state.search)
 
 
   } catch (error) {
@@ -54,12 +55,23 @@ const controlSearchResults = async () => {
   }
 
 }
+const controlPagination = async (goto) => {
+
+
+  resultsView.render(model.getSearchResultsPage(goto))
+
+  paginationView.render(model.state.search)
+
+}
+
+
 
 
 //publisher subsiber pattern
 const init = function () {
   recipeView.addHandlerRender(controlRecipe)
   searchView.addHandlerSearch(controlSearchResults)
+  paginationView.addHandlerPagination(controlPagination)
 }
 
 
