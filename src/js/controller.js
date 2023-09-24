@@ -5,9 +5,12 @@ const recipeContainer = document.querySelector('.recipe');
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
 import searchView from './view/searchView.js';
+import resultsView from './view/resultsView.js';
 
-
-
+//from parcel
+if(module.hot){
+  module.hot.accept()
+}
 
 
 
@@ -33,17 +36,17 @@ const controlRecipe = async () => {
 }
 const controlSearchResults = async () => {
   try {
-
+    resultsView.renderSpinner()
     const query = searchView.getQuery()
-    if(!query)
-    return
+    if (!query)
+      return
 
 
 
     await model.loadSearchResults(query)
 
 
-
+    resultsView.render(model.state.search.results)
 
 
   } catch (error) {
@@ -61,4 +64,6 @@ const init = function () {
 
 
 init()
+
+
 
