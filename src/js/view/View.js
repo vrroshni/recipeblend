@@ -32,34 +32,61 @@ export default class View {
     this._parentElement.innerHTML = ''
   }
 
+  // update(data) {
+  //   this._data = data
+  //   const newMarkup = this._generateMarkUp()
+
+  //   //virtual dom(living in memory to compare)
+  //   const newDom = document.createRange().createContextualFragment(newMarkup)
+  //   const newElements = Array.from(newDom.querySelectorAll("*")) //entire list of elements in newDom
+
+  //   const currentElements = Array.from(this._parentElement.querySelectorAll("*"))
+
+  //   newElements.forEach((newEl, i) => {
+  //     const currentEl = currentElements[i]
+
+  //     if (!newEl.isEqualNode(currentEl) && newEl.firstChild?.nodeValue.trim() !== '') {
+  //       currentEl.textContent = newEl.textContent
+  //     }
+
+  //     //changing attributes
+  //     if (!newEl.isEqualNode(currentEl)) {
+  //       Array.from(newEl.attributes).forEach(attr =>
+  //         currentEl.setAttribute(attr.name, attr.value)
+  //       )
+  //     }
+
+
+  //   })
+  // }
   update(data) {
-    this._data = data
-    const newMarkup = this._generateMarkUp()
+    this._data = data;
+    const newMarkup = this._generateMarkUp();
 
-    //virtual dom(living in memory to compare)
-    const newDom = document.createRange().createContextualFragment(newMarkup)
-    const newElements = Array.from(newDom.querySelectorAll("*")) //entire list of elements in newDom
-
-    const currentElements = Array.from(this._parentElement.querySelectorAll("*"))
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const curElements = Array.from(this._parentElement.querySelectorAll('*'));
 
     newElements.forEach((newEl, i) => {
-      const currentEl = currentElements[i]
+      const curEl = curElements[i];
+      // console.log(curEl, newEl.isEqualNode(curEl));
 
-      if (!newEl.isEqualNode(currentEl) && newEl.firstChild?.nodeValue.trim() !== '') {
-        currentEl.textContent = newEl.textContent
+      // Updates changed TEXT
+      if (
+        !newEl.isEqualNode(curEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        // console.log('💥', newEl.firstChild.nodeValue.trim());
+        curEl.textContent = newEl.textContent;
       }
 
-      //changing attributes
-      if (!newEl.isEqualNode(currentEl)) {
+      // Updates changed ATTRIBUES
+      if (!newEl.isEqualNode(curEl))
         Array.from(newEl.attributes).forEach(attr =>
-          currentEl.setAttribute(attr.name, attr.value)
-        )
-      }
-
-
-    })
+          curEl.setAttribute(attr.name, attr.value)
+        );
+    });
   }
-
   renderError(message = this._errorMessage) {
     const markup = `<div class="error">
         <div>
