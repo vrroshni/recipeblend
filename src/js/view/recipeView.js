@@ -11,6 +11,8 @@ class RecipeView extends View {
 
 
   _generateMarkUp() {
+
+    console.log(this._data.imageUrl,this._data)
     return `<figure class="recipe__fig">
         <img src=${this._data.imageUrl} alt="Tomato" class="recipe__img" />
         <h1 class="recipe__title">

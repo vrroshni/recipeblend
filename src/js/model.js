@@ -21,7 +21,7 @@ const createRecipeObject = function (data) {
         title: recipe.title,
         publisher: recipe.publisher,
         sourceUrl: recipe.source_url,
-        image: recipe.image_url,
+        imageUrl: recipe.image_url,
         servings: recipe.servings,
         cookingTime: recipe.cooking_time,
         ingredients: recipe.ingredients,
@@ -32,6 +32,7 @@ export const loadRecipe = async function (id) {
     try {
 
         const data = await AJAX(`${API_URL}${id}?key=${KEY}`)
+        console.log(data, data.data, "load recipe")
 
         state.recipe = createRecipeObject(data)
 
@@ -56,6 +57,9 @@ export const loadSearchResults = async function (query) {
         const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`)
 
         const { recipes } = data.data
+
+        console.log(recipes,"recipes")
+
         state.search.results = recipes.map((recipe) => {
             return {
                 publisher: recipe.publisher,

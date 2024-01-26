@@ -15,7 +15,11 @@ import { MODAL_CLOSE_SEC } from './config.js';
 
 const controlRecipe = async () => {
   try {
+   
+
     const id = window.location.hash.slice(1)
+    console.log("refreshed it")
+    console.log(id,"id from url")
     if (!id) {
       return
     }
@@ -38,12 +42,12 @@ const controlSearchResults = async () => {
     if (!query) {
       return
     }
-    
+
     await model.loadSearchResults(query)
     resultsView.render(model.getSearchResultsPage())
     paginationView.render(model.state.search)
   } catch (error) {
-    console.log(error,"search error")
+    console.log(error, "search error")
     resultsView.renderError()
   }
 }
